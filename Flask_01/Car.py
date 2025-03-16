@@ -1,18 +1,18 @@
 import json
 
 class Engine:
-    def __init__(self, type, displacement, horsepower, torque):
-        self.type = type
+    def __init__(self, fuel_type, displacement, horsepower, torque):
+        self.fuel_type = fuel_type
         self.displacement = displacement
         self.horsepower = horsepower
         self.torque = torque
 
     def __repr__(self):
-        return f"Engine(type={self.type}, displacement={self.displacement}, horsepower={self.horsepower}, torque={self.torque})"
+        return f"Engine(fuel_type={self.fuel_type}, displacement={self.displacement}, horsepower={self.horsepower}, torque={self.torque})"
     
     def to_dict(self):
         return {
-            "type": self.type,
+            "fuel_type": self.fuel_type,
             "displacement": self.displacement,
             "horsepower": self.horsepower,
             "torque": self.torque

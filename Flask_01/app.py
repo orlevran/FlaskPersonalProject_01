@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 import json
 from Car import *
 
@@ -9,7 +9,7 @@ car1 = Car(
     model="Camry",
     year=2022,
     engine={
-          "type" : "Gasoline",
+          "fuel_type" : "Gasoline",
           "displacement" : "2.5L",
           "horsepower" : 203,
           "torque" : "184 lb-ft"
@@ -25,7 +25,7 @@ car2 = Car(
     model="Civic",
     year=2023,
     engine={
-          "type" : "Turbocharged Gasoline",
+          "fuel_type" : "Turbocharged Gasoline",
           "displacement" : "1.5L",
           "horsepower" : 180,
           "torque" : "177 lb-ft"
@@ -36,12 +36,13 @@ car2 = Car(
     features=["Wireless Apple CarPlay","Honda Sensing Safety Suite","Heated Front Seats","Blind Spot Monitoring"],
     price=24900)
 
+"""
 car3 = Car(
     make="Ford",
     model="Mustang",
     year=2024,
     engine={
-          "type" : "V8",
+          "fuel_type" : "V8",
           "displacement" : "5.0L",
           "horsepower" : 450,
           "torque" : "410 lb-ft"
@@ -51,10 +52,12 @@ car3 = Car(
     dimensions={"length" : "188.5 in", "width" : "75.4 in", "height" : "54.3 in", "wheelbase" : "107.1 in"},
     features=["Performance Exhaust","Track Mode","Leather Interior","B&O Sound System"],
     price=43000)
+    """
 
 cars = [
-    car1.to_dict(), car2.to_dict(), car3.to_dict()
+    car1.to_dict(), car2.to_dict()
 ]
+#, car3.to_dict()
 
 @app.route('/')
 def home():
@@ -63,6 +66,29 @@ def home():
 @app.get("/cars")
 def get_cars():
     return {"cars" : cars}
+
+@app.post("/cars")
+def create_car():
+    try:
+        request_data = request.get_json()
+        new_car = Car(
+        make=request_data["make"],
+        model=request_data["model"],
+        year=request_data["year"],
+        engine=request_data["engine"],
+        transmission=request_data["transmission"],
+        fuel_efficiency=request_data["fuel_efficiency"],
+        dimensions=request_data["dimensions"],
+        features=request_data["features"],
+        price=request_data["price"]
+        )
+
+        # Add the new car to the list
+        cars.append(new_car.to_dict())
+        return jsonify(new_car.to_dict()), 201
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
