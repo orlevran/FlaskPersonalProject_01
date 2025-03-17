@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-import json
 from Car import *
 
 app = Flask(__name__)
@@ -54,10 +53,10 @@ car3 = Car(
     price=43000)
     """
 
-cars = [
-    car1.to_dict(), car2.to_dict()
-]
-#, car3.to_dict()
+cars = {
+    str(car1._id) : car1.to_dict(), str(car2._id) : car2.to_dict()
+    #, 3 : car3.to_dict()
+}
 
 @app.route('/')
 def home():
@@ -65,11 +64,28 @@ def home():
 
 @app.get("/cars")
 def get_cars():
-    return {"cars" : cars}
+    try:
+        return {"cars" : list(cars.values())}
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+#@app.get("/cars/<string:car_id>")
+@app.get("/car")
+def get_car():
+    try:
+        request_data = request.get_json()
+        car_id=str(request_data["_id"])
+        return cars[car_id], 201
+    except KeyError as ke:
+        return {"message" : "Car not found"}, 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 @app.post("/cars")
 def create_car():
     try:
+        car_id = uuid.uuid4().hex
+
         request_data = request.get_json()
         new_car = Car(
         make=request_data["make"],
@@ -83,8 +99,7 @@ def create_car():
         price=request_data["price"]
         )
 
-        # Add the new car to the list
-        cars.append(new_car.to_dict())
+        cars[str(car_id)] = {**new_car.to_dict()}
         return jsonify(new_car.to_dict()), 201
     
     except Exception as e:

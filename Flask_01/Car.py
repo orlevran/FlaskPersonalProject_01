@@ -1,4 +1,5 @@
 import json
+import uuid
 
 class Engine:
     def __init__(self, fuel_type, displacement, horsepower, torque):
@@ -52,6 +53,7 @@ class Dimensions:
 
 class Car:
     def __init__(self, make, model, year, engine, transmission, fuel_efficiency, dimensions, features, price):
+        self._id = uuid.uuid4().hex
         self.make = make
         self.model = model
         self.year = year
@@ -69,6 +71,7 @@ class Car:
     
     def to_dict(self):
         return {
+            "_id" : self._id,
             "make": self.make,
             "model": self.model,
             "year": self.year,
