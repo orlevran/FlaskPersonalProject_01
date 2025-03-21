@@ -69,7 +69,16 @@ def get_cars():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-#@app.get("/cars/<string:car_id>")
+@app.get("/cars/<string:car_id>")
+def get_car_by_id(car_id):
+    try:
+        return cars[car_id], 200
+    except KeyError:
+        return {"message": "Car not found"}, 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
 @app.get("/car")
 def get_car():
     try:
