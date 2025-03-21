@@ -74,9 +74,9 @@ def get_cars():
 def get_car():
     try:
         request_data = request.get_json()
-        car_id=str(request_data["_id"])
+        car_id = request_data["_id"]
         return cars[car_id], 201
-    except KeyError as ke:
+    except KeyError:
         return {"message" : "Car not found"}, 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -84,8 +84,6 @@ def get_car():
 @app.post("/cars")
 def create_car():
     try:
-        car_id = uuid.uuid4().hex
-
         request_data = request.get_json()
         new_car = Car(
         make=request_data["make"],
@@ -99,7 +97,7 @@ def create_car():
         price=request_data["price"]
         )
 
-        cars[str(car_id)] = {**new_car.to_dict()}
+        cars[str(new_car._id)] = {**new_car.to_dict()}
         return jsonify(new_car.to_dict()), 201
     
     except Exception as e:
