@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_smorest import abort
 from Car import *
 
 app = Flask(__name__)
@@ -111,6 +112,25 @@ def create_car():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+
+@app.delete("/car")
+def delete_car():
+    try:
+        request_data = request.get_json()
+        car_id = request_data["_id"]
+        del cars[car_id]
+        return {"message" : f"Car {car_id} deleted"}
+    except KeyError:
+        abort(404, message="Car not found")
+
+@app.delete("/cars/<string:car_id>")
+def delet_car_by_id(car_id):
+    try:
+        del cars[car_id]
+        return {"message" : f"Car {car_id} deleted"}
+    except KeyError:
+        abort(404, message="Car not found")
 
 if __name__ == '__main__':
     app.run(debug=True)
