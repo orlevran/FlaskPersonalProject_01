@@ -132,6 +132,30 @@ def delet_car_by_id(car_id):
     except KeyError:
         abort(404, message="Car not found")
 
+@app.put("/car")
+def update_car():
+    try:
+        request_data = request.get_json()
+        car_id = request_data["_id"]
+        car = cars[car_id]
+        car |= request_data
+        cars[car_id] = car
+        return car
+    except KeyError as ke:
+        abort(404, str(ke))
+
+@app.put("/cars/<string:car_id>")
+def update_car_by_id(car_id):
+    try:
+        request_data = request.get_json()
+        car = cars[car_id]
+        car |= request_data
+        cars[car_id] = car
+        return car
+    except KeyError as ke:
+        abort(404, str(ke))
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
