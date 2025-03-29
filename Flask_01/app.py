@@ -1,160 +1,20 @@
-from flask import Flask, request, jsonify
-from flask_smorest import abort
-from Car import *
+from flask import Flask
+from resources.Car import blp as CarBlueprint
+from flask_smorest import Api
 
 app = Flask(__name__)
 
-car1 = Car(
-    make="Toyota",
-    model="Camry",
-    year=2022,
-    engine={
-          "fuel_type" : "Gasoline",
-          "displacement" : "2.5L",
-          "horsepower" : 203,
-          "torque" : "184 lb-ft"
-    },
-    transmission="8-speed Automatic",
-    fuel_efficiency={"city_mpg" : 28, "highway_mpg" : 39},
-    dimensions={"length" : "192.1 in", "width" : "72.4 in in", "height" : "56.9 in", "wheelbase" : "111.2 in"},
-    features=["Apple CarPlay","Android Auto","Adaptive Cruise Control","Lane Departure Warning"],
-    price=25995)
+app.config["PROPAGATE_EXCEPTIONS"] = True
+app.config["API_TITLE"] = "Stores REST API"
+app.config["API_VERSION"] = "v1"
+app.config["OPENAPI_VERSION"] = "3.0.3"
+app.config["OPENAPI_URL_PREFIX"] = "/"
+app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
+app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
-car2 = Car(
-    make="Honda",
-    model="Civic",
-    year=2023,
-    engine={
-          "fuel_type" : "Turbocharged Gasoline",
-          "displacement" : "1.5L",
-          "horsepower" : 180,
-          "torque" : "177 lb-ft"
-    },
-    transmission="CVT",
-    fuel_efficiency={"city_mpg" : 31, "highway_mpg" : 40},
-    dimensions={"length" : "184.0 in", "width" : "70.9 in", "height" : "56.9 in", "wheelbase" : "111.2 in"},
-    features=["Wireless Apple CarPlay","Honda Sensing Safety Suite","Heated Front Seats","Blind Spot Monitoring"],
-    price=24900)
+api = Api(app)
 
-"""
-car3 = Car(
-    make="Ford",
-    model="Mustang",
-    year=2024,
-    engine={
-          "fuel_type" : "V8",
-          "displacement" : "5.0L",
-          "horsepower" : 450,
-          "torque" : "410 lb-ft"
-    },
-    transmission="6-speed Manual",
-    fuel_efficiency={"city_mpg" : 15, "highway_mpg" : 24},
-    dimensions={"length" : "188.5 in", "width" : "75.4 in", "height" : "54.3 in", "wheelbase" : "107.1 in"},
-    features=["Performance Exhaust","Track Mode","Leather Interior","B&O Sound System"],
-    price=43000)
-    """
-
-cars = {
-    str(car1._id) : car1.to_dict(), str(car2._id) : car2.to_dict()
-    #, 3 : car3.to_dict()
-}
-
-@app.route('/')
-def home():
-    return "Hello world"
-
-@app.get("/cars")
-def get_cars():
-    try:
-        return {"cars" : list(cars.values())}
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-@app.get("/cars/<string:car_id>")
-def get_car_by_id(car_id):
-    try:
-        return cars[car_id], 200
-    except KeyError:
-        return {"message": "Car not found"}, 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-
-@app.get("/car")
-def get_car():
-    try:
-        request_data = request.get_json()
-        car_id = request_data["_id"]
-        return cars[car_id], 201
-    except KeyError:
-        return {"message" : "Car not found"}, 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-
-@app.post("/cars")
-def create_car():
-    try:
-        request_data = request.get_json()
-        new_car = Car(
-        make=request_data["make"],
-        model=request_data["model"],
-        year=request_data["year"],
-        engine=request_data["engine"],
-        transmission=request_data["transmission"],
-        fuel_efficiency=request_data["fuel_efficiency"],
-        dimensions=request_data["dimensions"],
-        features=request_data["features"],
-        price=request_data["price"]
-        )
-
-        cars[str(new_car._id)] = {**new_car.to_dict()}
-        return jsonify(new_car.to_dict()), 201
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    
-
-@app.delete("/car")
-def delete_car():
-    try:
-        request_data = request.get_json()
-        car_id = request_data["_id"]
-        del cars[car_id]
-        return {"message" : f"Car {car_id} deleted"}
-    except KeyError:
-        abort(404, message="Car not found")
-
-@app.delete("/cars/<string:car_id>")
-def delet_car_by_id(car_id):
-    try:
-        del cars[car_id]
-        return {"message" : f"Car {car_id} deleted"}
-    except KeyError:
-        abort(404, message="Car not found")
-
-@app.put("/car")
-def update_car():
-    try:
-        request_data = request.get_json()
-        car_id = request_data["_id"]
-        car = cars[car_id]
-        car |= request_data
-        cars[car_id] = car
-        return car
-    except KeyError as ke:
-        abort(404, str(ke))
-
-@app.put("/cars/<string:car_id>")
-def update_car_by_id(car_id):
-    try:
-        request_data = request.get_json()
-        car = cars[car_id]
-        car |= request_data
-        cars[car_id] = car
-        return car
-    except KeyError as ke:
-        abort(404, str(ke))
-
+api.register_blueprint(CarBlueprint)
 
 if __name__ == '__main__':
     app.run(debug=True)
