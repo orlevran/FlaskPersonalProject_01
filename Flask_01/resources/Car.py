@@ -1,12 +1,15 @@
-from flask import request, jsonify
+from flask import request#, jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from cars_data import cars, CarItem
+from schemas import CarSchema, CarUpdateSchema
+from cars_data import CarItem, cars
 
 blp = Blueprint("cars", __name__, description="Operations on cars")
 
 @blp.route("/cars/<string:car_id>")
 class Car(MethodView):
+
+    @blp.response(200, CarSchema)
     def get(self, car_id):
         try:
             return cars[car_id], 200
@@ -20,11 +23,13 @@ class Car(MethodView):
         except KeyError:
             abort(404, message="Car not found")
 
-    def put(self, car_id):
+    @blp.arguments(CarUpdateSchema)
+    @blp.response(200, CarSchema)
+    def put(self, car_data, car_id):
         try:
-            request_data = request.get_json()
+            #request_data = request.get_json()
             car = cars[car_id]
-            car |= request_data
+            car |= car_data
             cars[car_id] = car
             return car
         except KeyError as ke:
@@ -32,10 +37,15 @@ class Car(MethodView):
 
 @blp.route("/cars")
 class CarsList(MethodView):
+
+    @blp.response(200, CarSchema(many=True))
     def get(self):
-        return {"cars" : list(cars.values())}
+        return cars.values()
+        #return {"cars" : list(cars.values())}
     
-    def post(self):
+    @blp.arguments(CarSchema)
+    @blp.response(201, CarSchema)
+    def post(self, request_data):
         request_data = request.get_json()
         new_car = CarItem(
         make=request_data["make"],
@@ -50,4 +60,5 @@ class CarsList(MethodView):
         )
 
         cars[str(new_car._id)] = {**new_car.to_dict()}
-        return jsonify(new_car.to_dict()), 201
+        return new_car
+        #return jsonify(new_car.to_dict()), 201
