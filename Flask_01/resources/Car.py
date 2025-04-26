@@ -53,10 +53,13 @@ class CarsList(MethodView):
         year=request_data["year"],
         engine=request_data["engine"],
         transmission=request_data["transmission"],
+        drivetrain=request_data["drivetrain"],
         fuel_efficiency=request_data["fuel_efficiency"],
         dimensions=request_data["dimensions"],
         features=request_data["features"],
-        price=request_data["price"]
+        color_options=request_data["color_options"],
+        price=request_data["price"],
+        warranty=request_data["warranty"]
         )
 
         cars[str(new_car._id)] = {**new_car.to_dict()}
