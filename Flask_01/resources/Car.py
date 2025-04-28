@@ -1,4 +1,3 @@
-from flask import request#, jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from schemas import CarSchema, CarUpdateSchema
@@ -27,41 +26,25 @@ class Car(MethodView):
     @blp.response(200, CarSchema)
     def put(self, car_data, car_id):
         try:
-            #request_data = request.get_json()
             car = cars[car_id]
-            car |= car_data
+            for key, value in car_data.items():
+                if hasattr(car, key):
+                    setattr(car, key, value)
             cars[car_id] = car
             return car
         except KeyError as ke:
-             abort(404, str(ke))
+            abort(404, str(ke))
 
 @blp.route("/cars")
 class CarsList(MethodView):
 
     @blp.response(200, CarSchema(many=True))
     def get(self):
-        return cars.values()
-        #return {"cars" : list(cars.values())}
-    
+        return [car.to_dict() for car in cars.values()]
+        
     @blp.arguments(CarSchema)
     @blp.response(201, CarSchema)
     def post(self, request_data):
-        request_data = request.get_json()
-        new_car = CarItem(
-        make=request_data["make"],
-        model=request_data["model"],
-        year=request_data["year"],
-        engine=request_data["engine"],
-        transmission=request_data["transmission"],
-        drivetrain=request_data["drivetrain"],
-        fuel_efficiency=request_data["fuel_efficiency"],
-        dimensions=request_data["dimensions"],
-        features=request_data["features"],
-        color_options=request_data["color_options"],
-        price=request_data["price"],
-        warranty=request_data["warranty"]
-        )
-
-        cars[str(new_car._id)] = {**new_car.to_dict()}
+        new_car = CarItem.from_dict(request_data)
+        cars[str(new_car._id)] = new_car
         return new_car
-        #return jsonify(new_car.to_dict()), 201

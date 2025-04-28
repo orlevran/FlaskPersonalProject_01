@@ -2,13 +2,13 @@ from marshmallow import Schema, fields, validate
 
 class TorqueSchema(Schema):
     torque_value = fields.Int(required=True)
+    unit = fields.Str(required=True)
     rpm = fields.Int(required=True)
-    value = fields.Str(required=True)
 
 class TorqueUpdateSchema(Schema):
     torque_value = fields.Int()
     unit = fields.Str()
-    rpm = fields.Int()
+    rpm = fields.Raw()
 
 class EngineSchema(Schema):
     engine_type = fields.Str(required=True)
@@ -28,12 +28,12 @@ class EngineUpdateSchema(Schema):
 
 class TransmissionSchema(Schema):
     transmission_type = fields.Str(required=True)
-    number_of_gears = fields.Int(required=True)
+    gears = fields.Int(required=True)
     description = fields.Str(required=True)
 
 class TransmissionUpdateSchema(Schema):
     transmission_type = fields.Str()
-    number_of_gears = fields.Int()
+    gears = fields.Int()
     description = fields.Str()
 
 class FuelEfficiencySchema(Schema):
@@ -47,14 +47,14 @@ class FuelEfficiencyUpdateSchema(Schema):
     combined_mpg = fields.Int()
 
 class DimensionsUnitSchema(Schema):
-    unit = fields.Str(required=True)
-    value = fields.Str(required=True)
+    unit_value = fields.Float(required=True)
+    unit_name = fields.Str(required=True)
     # Define the unit of measurement for dimensions
     # e.g., "inches", "cm", etc.
 
 class DimensionsUnitUpdateSchema(Schema):
-    unit = fields.Str()
-    value = fields.Str()
+    unit_value = fields.Float()
+    unit_name = fields.Str()
     # Optional fields for partial updates
     # Define the unit of measurement for dimensions
     # e.g., "inches", "cm", etc.
@@ -109,14 +109,14 @@ class PriceUpdateSchema(Schema):
     # e.g., base price, currency, MSRP, destination fee, total price
 
 class WarrantyUnitSchema(Schema):
-    duration_years = fields.Str(required=True)
-    miles = fields.Str(required=True)
+    duration_years = fields.Int(required=True)
+    miles = fields.Raw(required=True)
     # Define the unit of measurement for warranty
     # e.g., "years", "miles", etc.
 
 class WarrantyUnitUpdateSchema(Schema):
-    duration_years = fields.Str()
-    miles = fields.Str()
+    duration_years = fields.Int()
+    miles = fields.Raw()
     # Optional fields for partial updates
     # Define the unit of measurement for warranty
     # e.g., "years", "miles", etc.
@@ -158,7 +158,7 @@ class CarUpdateSchema(Schema):
     drivetrain = fields.Str()
     fuel_efficiency = fields.Nested(FuelEfficiencySchema)
     dimensions = fields.Nested(DimensionsSchema)
-    features = fields.Nested(FeaturesSchema.Str())
+    features = fields.Nested(FeaturesSchema)
     color_options = fields.List(fields.Str())
     price = fields.Nested(PriceSchema)
     warranty = fields.Nested(WarrantySchema)
