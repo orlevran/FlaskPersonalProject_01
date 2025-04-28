@@ -1,15 +1,13 @@
-import json
 import uuid
-
     
 class Engine:
     def __init__(self, engine_type, fuel_type, displacement, horsepower, torque, aspiration):
-        self.engine_type = engine_type
-        self.fuel_type = fuel_type
-        self.displacement = displacement
-        self.horsepower = horsepower
-        self.torque = torque
-        self.aspiration = aspiration
+        self.engine_type = engine_type #string
+        self.fuel_type = fuel_type #string
+        self.displacement = displacement #string
+        self.horsepower = horsepower #int
+        self.torque = torque #Torque
+        self.aspiration = aspiration #string
 
     def __repr__(self):
         return (f"Engine(engine_type={self.engine_type}, fuel_type={self.fuel_type}, "
@@ -28,9 +26,9 @@ class Engine:
 
 class Torque:
     def __init__(self, torque_value, unit, rpm):
-        self.torque_value = torque_value
-        self.unit = unit
-        self.rpm = rpm
+        self.torque_value = torque_value #int
+        self.unit = unit #string
+        self.rpm = rpm #int
 
     def __repr__(self):
         return f"Torque(torque_value={self.torque_value}, unit={self.unit}, rpm={self.rpm})"
@@ -44,9 +42,9 @@ class Torque:
 
 class Transmission:
     def __init__(self, transmission_type, gears, description):
-        self.transmission_type = transmission_type
-        self.gears = gears
-        self.description = description
+        self.transmission_type = transmission_type #string
+        self.gears = gears #int
+        self.description = description #string
 
     def __repr__(self):
         return (f"Transmission(transmission_type={self.transmission_type}, "
@@ -61,9 +59,9 @@ class Transmission:
 
 class FuelEfficiency:
     def __init__(self, city_mpg, highway_mpg, combined_mpg):
-        self.city_mpg = city_mpg
-        self.highway_mpg = highway_mpg
-        self.combined_mpg = combined_mpg
+        self.city_mpg = city_mpg #int
+        self.highway_mpg = highway_mpg #int
+        self.combined_mpg = combined_mpg #int
 
     def __repr__(self):
         return (f"FuelEfficiency(city_mpg={self.city_mpg}, highway_mpg={self.highway_mpg}, combined_mpg={self.combined_mpg})")
@@ -77,11 +75,11 @@ class FuelEfficiency:
 
 class Dimensions:
     def __init__(self, length, width, height, wheelbase, curb_weight):
-        self.length = length
-        self.width = width
-        self.height = height
-        self.wheelbase = wheelbase
-        self.curb_weight = curb_weight
+        self.length = length #DimensionsUnit
+        self.width = width #DimensionsUnit
+        self.height = height #DimensionsUnit
+        self.wheelbase = wheelbase #DimensionsUnit
+        self.curb_weight = curb_weight #DimensionsUnit
 
     def __repr__(self):
         return (f"Dimensions(length={self.length}, width={self.width}, "
@@ -98,8 +96,8 @@ class Dimensions:
     
 class DimensionsUnit:
     def __init__(self, unit_value, unit_name):
-        self.unit_value = unit_value
-        self.unit_name = unit_name
+        self.unit_value = unit_value #double
+        self.unit_name = unit_name #string
 
     def __repr__(self):
         return (f"DimensionsUnit(unit_value={self.unit_value}, unit_name={self.unit_name})")
@@ -112,9 +110,9 @@ class DimensionsUnit:
 
 class Features:
     def __init__(self,infotainment, safety, comfort):
-        self.infotainment = infotainment
-        self.safety = safety
-        self.comfort = comfort
+        self.infotainment = infotainment #list of strings
+        self.safety = safety #list of strings
+        self.comfort = comfort #list of strings
 
     def __repr__(self):
         return (f"Features(infotainment={self.infotainment}, safety={self.safety}, "
@@ -129,11 +127,11 @@ class Features:
 
 class Price:
     def __init__(self, base_price, currency, msrp, destination_fee, total_price):
-        self.base_price = base_price
-        self.currency = currency
-        self.msrp = msrp
-        self.destination_fee = destination_fee
-        self.total_price = total_price
+        self.base_price = base_price #int
+        self.currency = currency #string
+        self.msrp = msrp #int
+        self.destination_fee = destination_fee #int
+        self.total_price = total_price #int
 
     def __repr__(self):
         return (f"Price(base_price={self.base_price}, currency={self.currency}, "
@@ -150,9 +148,9 @@ class Price:
 
 class Warranty:
     def __init__(self, basic, powertrain, roadside_assistance):
-        self.basic = basic
-        self.powertrain = powertrain
-        self.roadside_assistance = roadside_assistance
+        self.basic = basic #WarrantyUnit
+        self.powertrain = powertrain #WarrantyUnit
+        self.roadside_assistance = roadside_assistance #WarrantyUnit
 
     def __repr__(self):
         return (f"Warranty(basic={self.basic}, powertrain={self.powertrain}, "
@@ -167,8 +165,8 @@ class Warranty:
     
 class WarrantyUnit:
     def __init__(self, duration_years, miles):
-        self.duration_years = duration_years
-        self.miles = miles
+        self.duration_years = duration_years #int
+        self.miles = miles #int
 
     def __repr__(self):
         return (f"WarrantyUnit(duration_years={self.duration_years}, miles={self.miles})")
@@ -183,18 +181,18 @@ class CarItem:
     def __init__(self, make, model, year, engine, transmission, drivetrain, fuel_efficiency,
                  dimensions, features, color_options, price, warranty):
         self._id = uuid.uuid4().hex
-        self.make = make
-        self.model = model
-        self.year = year
-        self.engine = engine
-        self.transmission = transmission
-        self.drivetrain = drivetrain
-        self.fuel_efficiency = fuel_efficiency
-        self.dimensions = dimensions
-        self.features = features
-        self.color_options = color_options
-        self.price = price
-        self.warranty = warranty
+        self.make = make #string
+        self.model = model #string
+        self.year = year #int
+        self.engine = engine #Engine
+        self.transmission = transmission #Transmission
+        self.drivetrain = drivetrain #string
+        self.fuel_efficiency = fuel_efficiency #FuelEfficiency
+        self.dimensions = dimensions #Dimensions
+        self.features = features #Features
+        self.color_options = color_options #list of strings
+        self.price = price #Price
+        self.warranty = warranty #Warranty
 
     def __repr__(self):
         return (f"Car(make={self.make}, model={self.model}, year={self.year}, engine={self.engine}, "
